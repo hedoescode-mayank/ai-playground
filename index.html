@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="AI Maze Intelligence System — Interactive 2D pathfinding visualizer. BFS, DFS, Dijkstra and A* algorithms visualized in real time." />
+  <title>AI Maze Intelligence System</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ── Navbar ─────────────────────────────────────────────────────────── -->
+  <nav class="navbar">
+    <div class="nav-logo">
+      <span class="nav-logo-dot"></span>
+      MAZE.AI
+    </div>
+    <ul class="nav-links">
+      <li><a href="#hero">Home</a></li>
+      <li><a href="#playground">Playground</a></li>
+      <li><a href="#aipong">AI Pong</a></li>
+      <li><a href="#aishapes">AI Shapes</a></li>
+      <li><a href="#realworld">Applications</a></li>
+    </ul>
+  </nav>
+
+  <!-- ── Hero ───────────────────────────────────────────────────────────── -->
+  <section class="hero" id="hero">
+    <canvas id="hero-canvas"></canvas>
+
+    <div class="hero-content">
+      <div class="hero-eyebrow">AI Pathfinding System</div>
+
+      <h1>
+        From Grid<br />
+        to <em>Intelligence</em>
+      </h1>
+
+      <p class="hero-tagline">
+        Watch algorithms navigate complexity in real time.
+        BFS, DFS, Dijkstra, and A* — each with a different mind.
+      </p>
+
+      <div class="hero-ctas">
+        <button class="btn btn-primary" id="cta-generate">Generate Maze</button>
+        <button class="btn btn-secondary" id="cta-solve">Watch AI Solve</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="rule"></div>
+
+  <!-- ── Playground ─────────────────────────────────────────────────────── -->
+  <section class="section" id="playground" style="padding-top:80px; padding-bottom:80px; background: var(--bg-2);">
+    <div class="section-inner">
+
+      <div class="playground-header">
+        <div>
+          <div class="section-label">Traffic Routing AI</div>
+          <div class="section-title" style="font-size: clamp(1.8rem, 3.5vw, 2.8rem); margin-bottom:0">
+            City <em>Simulation</em>
+          </div>
+        </div>
+        <p style="font-size:0.82rem; color:var(--cream-mute); max-width:320px; line-height:1.7; font-weight:300;">
+          Build a city grid, draw traffic jams, and watch the AI route around them factoring in travel time.
+        </p>
+      </div>
+
+      <div class="playground-grid">
+
+        <!-- LEFT PANEL -->
+        <div class="panel">
+          <div class="panel-label">Algorithm</div>
+
+          <div class="control-group">
+            <label class="control-label" for="algo-select">Pathfinding</label>
+            <select class="select-custom" id="algo-select">
+              <option value="bfs">BFS — Breadth-First</option>
+              <option value="dfs">DFS — Depth-First</option>
+              <option value="dijkstra">Dijkstra</option>
+              <option value="astar" selected>A* — A-Star</option>
+            </select>
+            <div class="algo-desc" id="algo-desc">
+              A* uses a heuristic to guide the search toward the goal — optimal and efficient.
+            </div>
+          </div>
+
+          <div class="control-group">
+            <label class="control-label" for="speed-range">Car Speed</label>
+            <div class="speed-wrap">
+              <span class="speed-label">Slow</span>
+              <input type="range" class="range-slider" id="speed-range" min="1" max="10" value="5" />
+              <span class="speed-label">Fast</span>
+            </div>
+          </div>
+
+          <div class="control-group">
+            <label class="control-label" for="draw-mode">Draw Mode (Click & Drag Canvas)</label>
+            <select class="select-custom" id="draw-mode">
+              <option value="traffic" selected>Paint Traffic (High Routing Cost)</option>
+              <option value="wall">Paint Buildings (Impassable)</option>
+              <option value="empty">Erase</option>
+            </select>
+          </div>
+
+          <div class="panel-label" style="margin-top:28px">City Config</div>
+
+          <div class="control-group">
+            <label class="control-label" for="gen-algo-select">Layout Style</label>
+            <select class="select-custom" id="gen-algo-select">
+              <option value="city" selected>City Grid Blocks</option>
+              <option value="recursive">Abstract Maze (Recursive)</option>
+              <option value="prims">Abstract Maze (Prim's)</option>
+            </select>
+          </div>
+
+          <div class="control-group">
+            <label class="control-label" for="difficulty-select">Difficulty</label>
+            <select class="select-custom" id="difficulty-select">
+              <option value="easy">Easy</option>
+              <option value="medium" selected>Medium</option>
+              <option value="hard">Hard</option>
+            </select>
+          </div>
+
+          <div class="panel-label" style="margin-top:28px">Controls</div>
+
+          <div class="action-buttons">
+            <button class="btn btn-primary" id="btn-generate">Generate City</button>
+            <button class="btn btn-accent" id="btn-start">Start Routing</button>
+            <button class="btn btn-ghost" id="btn-reset">Reset</button>
+          </div>
+
+          <div class="panel-label" style="margin-top:28px">Legend</div>
+          <div class="legend">
+            <div class="legend-item">
+              <div class="legend-dot" style="background:#00ff88"></div>
+              Car (Start)
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background:#f87171"></div>
+              Destination
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background:#f59e0b; box-shadow: 0 0 5px #f59e0b"></div>
+              Traffic Jam
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background:#0a0a0a; border:1px solid rgba(255,255,255,0.1)"></div>
+              Building
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background:#1a2d3a"></div>
+              Street (Clear)
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background:#a78bfa"></div>
+              Chosen Route
+            </div>
+          </div>
+        </div>
+
+        <!-- CENTER: MAZE CANVAS -->
+        <div class="canvas-panel">
+          <div class="canvas-topbar">
+            <span class="canvas-title">Traffic Simulation Grid</span>
+            <div class="canvas-circles">
+              <div class="cc" style="background:#3a1f1f"></div>
+              <div class="cc" style="background:#3a3220"></div>
+              <div class="cc" style="background:#1f3a2a"></div>
+            </div>
+          </div>
+
+          <div class="canvas-wrap">
+            <canvas id="maze-canvas" width="600" height="600"></canvas>
+          </div>
+
+          <div id="progress-wrap">
+            <div class="progress-track">
+              <div id="progress-bar"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT PANEL -->
+        <div class="right-panel panel" style="padding:0; background:var(--bg-2);">
+
+          <div class="stat-block">
+            <div class="stat-label">Algorithm</div>
+            <div class="stat-value algo-val" id="stat-algo">—</div>
+          </div>
+
+          <div class="stat-block">
+            <div class="stat-label">Nodes Explored</div>
+            <div class="stat-value" id="stat-nodes">0</div>
+          </div>
+
+          <div class="stat-block">
+            <div class="stat-label">Estimated Travel Time</div>
+            <div class="stat-value" id="stat-path">0 min</div>
+          </div>
+
+          <div class="stat-block">
+            <div class="stat-label">AI Compute Time</div>
+            <div class="stat-value" style="font-size:1.2rem" id="stat-time">0 ms</div>
+          </div>
+
+          <div class="ai-block">
+            <div class="ai-header-row">
+              <div class="ai-dot"></div>
+              <span class="ai-label-text">Live Decision Feed</span>
+            </div>
+            <div id="ai-explanation">
+              Generate a city layout, paint some traffic jams, and click Start Routing to observe the AI logic.
+            </div>
+          </div>
+
+          <div class="comparison-block">
+            <div class="control-label" style="margin-bottom:16px">Algorithm Comparison</div>
+
+            <div class="comp-row">
+              <span class="comp-name">BFS</span>
+              <div class="comp-bar-wrap"><div class="comp-bar" style="width:100%;background:var(--cyan-dim)"></div></div>
+              <span class="comp-note">Shortest</span>
+            </div>
+            <div class="comp-row">
+              <span class="comp-name">DFS</span>
+              <div class="comp-bar-wrap"><div class="comp-bar" style="width:50%"></div></div>
+              <span class="comp-note">Not Optimal</span>
+            </div>
+            <div class="comp-row">
+              <span class="comp-name">Dijkstra</span>
+              <div class="comp-bar-wrap"><div class="comp-bar" style="width:88%;background:var(--cyan-dim)"></div></div>
+              <span class="comp-note">Shortest</span>
+            </div>
+            <div class="comp-row">
+              <span class="comp-name">A*</span>
+              <div class="comp-bar-wrap"><div class="comp-bar" style="width:72%;background:var(--purple)"></div></div>
+              <span class="comp-note">Optimal+Fast</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <div class="rule"></div>
+
+  <!-- ── AI Pong ────────────────────────────────────────────────────────── -->
+  <section class="section" id="aipong" style="padding-top:80px; padding-bottom:80px; background: var(--bg-3);">
+    <div class="section-inner">
+      <div class="playground-header">
+        <div>
+          <div class="section-label">Predictive Intelligence</div>
+          <div class="section-title" style="font-size: clamp(1.8rem, 3.5vw, 2.8rem); margin-bottom:0">
+            AI <em>Pong</em>
+          </div>
+        </div>
+        <p style="font-size:0.82rem; color:var(--cream-mute); max-width:320px; line-height:1.7; font-weight:300;">
+          Play against an AI that mathematically calculates the exact trajectory and intercepts the ball flawlessly.
+        </p>
+      </div>
+
+      <div class="pong-grid">
+        <div class="canvas-panel" style="background:#000;">
+          <div class="canvas-topbar">
+            <span class="canvas-title">Pong Simulation</span>
+            <div class="canvas-circles">
+              <span id="pong-score-player" style="color:#fff; font-family:'Playfair Display', serif; font-size:1.2rem; margin-right:10px">0</span>
+              <span style="color:#666; font-size:1.2rem; margin-right:10px">-</span>
+              <span id="pong-score-ai" style="color:#fff; font-family:'Playfair Display', serif; font-size:1.2rem;">0</span>
+            </div>
+          </div>
+          <div class="canvas-wrap" style="padding:0; min-height:400px; display:flex; justify-content:center; align-items:center; position:relative;">
+            <canvas id="pong-canvas" width="800" height="400" tabindex="0"></canvas>
+            <div id="pong-overlay" style="position:absolute; inset:0; display:flex; justify-content:center; align-items:center; color:white; font-size:2rem; background:rgba(0,0,0,0.7); cursor:pointer;">
+              Click to Start
+            </div>
+          </div>
+        </div>
+
+        <div class="right-panel panel" style="padding:0; background:var(--bg-2);">
+          <div class="stat-block">
+            <div class="stat-label">Ball Velocity</div>
+            <div class="stat-value algo-val" id="pong-stat-vel" style="font-family:'Courier New', monospace;">X: 0.00, Y: 0.00</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-label">Predicted Intercept</div>
+            <div class="stat-value" id="pong-stat-intercept">--</div>
+          </div>
+          <div class="ai-block">
+            <div class="ai-header-row">
+              <div class="ai-dot"></div>
+              <span class="ai-label-text">Prediction Engine</span>
+            </div>
+            <div id="pong-explanation" style="font-family:'Courier New', monospace; font-size:0.75rem; color:var(--cyan-dim); white-space:pre-wrap;">
+              Waiting for ball...
+            </div>
+          </div>
+          <div class="pong-controls" style="padding: 20px 24px;">
+             <p style="font-size:0.75rem; color:var(--cream-mute);">Controls: Click canvas & use W/S or Up/Down arrows to move.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="rule"></div>
+
+  <!-- ── AI Shapes ──────────────────────────────────────────────────────── -->
+  <section class="section" id="aishapes" style="padding-top:80px; padding-bottom:80px; background: var(--bg-2);">
+    <div class="section-inner">
+      <div class="playground-header">
+        <div>
+          <div class="section-label">Geometric Intelligent Recognition</div>
+          <div class="section-title" style="font-size: clamp(1.8rem, 3.5vw, 2.8rem); margin-bottom:0">
+            Shape <em>Analyzer</em>
+          </div>
+        </div>
+        <p style="font-size:0.82rem; color:var(--cream-mute); max-width:320px; line-height:1.7; font-weight:300;">
+          Draw freely on the canvas. The AI will classify your stroke and physically morph it into perfect mathematical geometry.
+        </p>
+      </div>
+
+      <div class="pong-grid">
+        <div class="canvas-panel" style="background:#0a0a0a; position:relative;">
+          <div class="canvas-topbar">
+            <span class="canvas-title">Drawing Canvas</span>
+            <button class="btn btn-ghost btn-sm" id="btn-clear-shapes">Clear Canvas</button>
+          </div>
+          <div class="canvas-wrap" style="padding:0; min-height:450px; display:flex; justify-content:center; align-items:center;">
+            <canvas id="shapes-canvas" width="800" height="450" style="cursor:crosshair; touch-action:none;"></canvas>
+          </div>
+        </div>
+
+        <div class="right-panel panel" style="padding:0; background:var(--bg-3);">
+          <div class="stat-block">
+            <div class="stat-label">Identified Class</div>
+            <div class="stat-value" id="shape-stat-class" style="font-size:1.8rem;">—</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-label">Confidence Score</div>
+            <div class="stat-value algo-val" id="shape-stat-conf" style="font-family:'Courier New', monospace; font-size:1.4rem; color:var(--green)">0.00%</div>
+          </div>
+          <div class="ai-block">
+            <div class="ai-header-row">
+              <div class="ai-dot"></div>
+              <span class="ai-label-text">Neural Analysis</span>
+            </div>
+            <div id="shape-explanation" style="font-family:'Courier New', monospace; font-size:0.75rem; color:var(--cyan-dim); white-space:pre-wrap; min-height:120px;">
+              Awaiting stroke input...
+            </div>
+          </div>
+          <div class="comparison-block">
+            <div class="control-label" style="margin-bottom:12px">Supported Geometries</div>
+            <div style="font-size:0.68rem; color:var(--cream-mute); line-height:1.8; display:grid; grid-template-columns:1fr 1fr;">
+              <div>• Line<br>• Circle<br>• Ellipse<br>• Triangle<br>• Square</div>
+              <div>• Rectangle<br>• Pentagon<br>• Hexagon<br>• Star<br>• Cylinder</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── NN Visualization ── -->
+      <div class="nn-panel" style="margin-top:2px; background:var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 20px;">
+        <div class="canvas-topbar" style="border-bottom:1px solid var(--border); padding:0 0 14px 0; margin-bottom: 20px; display:flex; justify-content:space-between;">
+          <span class="canvas-title">Neural Network Activation Simulation</span>
+          <div class="canvas-circles">
+             <div class="cc" style="background:var(--cyan-dim)"></div>
+             <div class="cc" style="background:#3a3a3a"></div>
+             <div class="cc" style="background:#555"></div>
+          </div>
+        </div>
+        <div class="canvas-wrap" style="padding:0; min-height:220px; display:flex; justify-content:center; align-items:center;">
+          <canvas id="nn-canvas" width="1160" height="220" style="max-width:100%;"></canvas>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="rule"></div>
+
+  <!-- ── Real World Applications ─────────────────────────────────────────── -->
+  <section id="realworld">
+    <div class="realworld-inner">
+
+      <div class="rw-top">
+        <div>
+          <div class="section-label">Real World Impact</div>
+          <div class="section-title">
+            Where pathfinding <em>drives the world</em>
+          </div>
+        </div>
+        <div class="section-body">
+          The algorithms you see here are not academic exercises — they power critical
+          infrastructure across transportation, robotics, and navigation every day.
+        </div>
+      </div>
+
+      <div class="rw-cards">
+
+        <div class="rw-card">
+          <div class="rw-number">01</div>
+          <h3>Self-Driving Vehicles</h3>
+          <p>
+            Autonomous cars use real-time pathfinding to navigate city streets, avoid obstacles,
+            and choose the safest route — continuously replanning as conditions change.
+          </p>
+          <span class="rw-tag">A* / Dijkstra</span>
+        </div>
+
+        <div class="rw-card">
+          <div class="rw-number">02</div>
+          <h3>Robotics Navigation</h3>
+          <p>
+            Warehouse robots, surgical arms, and exploration rovers rely on grid-based
+            pathfinding to move efficiently through structured environments without collisions.
+          </p>
+          <span class="rw-tag">BFS / A*</span>
+        </div>
+
+        <div class="rw-card">
+          <div class="rw-number">03</div>
+          <h3>GPS and Mapping</h3>
+          <p>
+            Navigation systems compute the fastest route across road networks modeled as
+            weighted graphs — a large-scale application of Dijkstra and its variants.
+          </p>
+          <span class="rw-tag">Dijkstra / A*</span>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <div class="rule"></div>
+
+  <!-- ── Footer ─────────────────────────────────────────────────────────── -->
+  <footer>
+    <div class="footer-logo">MAZE.AI</div>
+    <div class="footer-note">AI Maze Intelligence System &mdash; </div>
+  </footer>
+
+  <!-- ── Scripts ────────────────────────────────────────────────────────── -->
+  <script type="module" src="js/app.js"></script>
+  <script type="module" src="js/pong.js"></script>
+  <script type="module" src="js/shapes.js"></script>
+
+  <script>
+    const algoDescs = {
+      bfs:      'BFS explores all neighbours level by level. It guarantees the shortest path in an unweighted grid.',
+      dfs:      'DFS dives as deep as possible before backtracking. Fast but does not guarantee the shortest path.',
+      dijkstra: 'Dijkstra always expands the lowest-cost node. Guarantees the shortest path with weighted edge support.',
+      astar:    'A* uses a heuristic to guide the search toward the goal — optimal and significantly faster than Dijkstra on most grids.',
+    };
+
+    const algoSelect = document.getElementById('algo-select');
+    const algoDesc   = document.getElementById('algo-desc');
+
+    algoSelect.addEventListener('change', () => {
+      algoDesc.style.opacity = '0';
+      setTimeout(() => {
+        algoDesc.textContent = algoDescs[algoSelect.value] || '';
+        algoDesc.style.opacity = '1';
+      }, 150);
+    });
+
+    algoDesc.style.transition = 'opacity 0.2s';
+  </script>
+
+</body>
+</html>
